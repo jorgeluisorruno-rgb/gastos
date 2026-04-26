@@ -200,6 +200,15 @@
   const CLIENT_ID = "497125360191-3vnqcfeh5dj83u5kkktipl52uju9m22u.apps.googleusercontent.com";
   const ROOT_FOLDER = "1zNjxxlkLD76sOXx8jnQ1-cxVr3-5xnjm";
 
+  const YEAR_FOLDERS = {
+    "2021": "1Hdn7Fx7PhOCctx8l0jjMfX5qQmWmaQNj",
+    "2022": "1sxas8kk9I4frlBzgNT0GKgo1jEZh8n1x",
+    "2023": "1qbrlebpKO88InQeCihvErXu9sSulD98M",
+    "2024": "1djlA50a8pzgtrvdiQ-fX5MSGdjtt7wMP",
+    "2025": "1lEV9Wik4FdMsPiceB4EZqe21MM8ymN3s",
+    "2026": "18U5KUQ-SDz76USBDDJf3haL0MoVUN01M"
+  };
+
   const CATEGORIES = [
     "Comida/Limpieza", "Auto (Combustible)", "Auto (Gastos Fijos)", "Auto (Gastos Variables)",
     "Auto (Reparaciones)", "Gastos Otros Autos", "Alquiler", "Servicios", "Tarjetas",
@@ -341,6 +350,8 @@
   }
 
   async function findYearFolder(year) {
+    // Usar IDs hardcodeados primero, luego buscar como fallback
+    if (YEAR_FOLDERS[String(year)]) return YEAR_FOLDERS[String(year)];
     const q = `name = '${year}' and '${ROOT_FOLDER}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
     return await driveSearch(q);
   }
@@ -390,7 +401,7 @@
     // Paso 2: escribir los valores en la fila nueva (fila lastRow+1, índice base 1)
     const newRowNumber = lastRow + 1;
     const range = encodeURIComponent(`${sheetName}!A${newRowNumber}:D${newRowNumber}`);
-    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${fileId}/values/${range}?valueInputOption=USER_ENTERED`;
+    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${fileId}/values/${range}?valueInputOption=RAW`;
     const res = await fetch(writeUrl, {
       method: "PUT",
       headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" },
